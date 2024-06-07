@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Książek</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .book-list {
+            margin-top: 20px;
+        }
+        .book-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Lista Książek</h1>
+
+    <div>
+        <label for="year">Wybierz rok:</label>
+        <input type="number" id="year" value="1937">
+        <button onclick="filterBooks()">Filtruj</button>
+    </div>
+
+    <div class="book-list" id="bookList"></div>
+
+    <script>
+        
+        class Book {
+            constructor(title, year, authorFirstName, authorLastName, borrowCount = 0) {
+                this.title = title;
+                this.year = year;
+                this.authorFirstName = authorFirstName;
+                this.authorLastName = authorLastName;
+                this.borrowCount = borrowCount;
+            }
+
+            
+            getAuthorFullName() {
+                return `${this.authorFirstName} ${this.authorLastName}`;
+            }
+
+            
+            increaseBorrowCount() {
+                this.borrowCount++;
+            }
+
+            
+            decreaseBorrowCount() {
+                if (this.borrowCount > 0) {
+                    this.borrowCount--;
+                }
+            }
+        }
+
+        
+        const books = [
+            new Book('Krzyżacy', 1900, 'Henryk', 'Sienkiewicz', 5),
+            new Book('Lalka', 1890, 'Bolesław', 'Prus', 2),
+            new Book('Ferdydurke', 1937, 'Witold', 'Gombrowicz', 3),
+            new Book('Pan Tadeusz', 1834, 'Adam', 'Mickiewicz', 4)
+        ];
+
+        
+        function filterBooks() {
+            const selectedYear = parseInt(document.getElementById('year').value);
+            const bookList = document.getElementById('bookList');
+            bookList.innerHTML = '';
+
+            books.forEach(book => {
+                if (book.year === selectedYear) {
+                    const bookItem = document.createElement('div');
+                    bookItem.className = 'book-item';
+                    bookItem.textContent = `Tytuł: ${book.title}, Autor: ${book.getAuthorFullName()}, Wypożyczenia: ${book.borrowCount}`;
+                    bookList.appendChild(bookItem);
+                }
+            });
+
+            if (bookList.innerHTML === '') {
+                bookList.textContent = 'Brak książek z wybranego roku.';
+            }
+        }
+
+        
+        function logMostBorrowedBook() {
+            let mostBorrowedBook = books.reduce((max, book) => (book.borrowCount > max.borrowCount ? book : max), books[0]);
+            console.log(`Książka z największą liczbą wypożyczeń: ${mostBorrowedBook.title}, Autor: ${mostBorrowedBook.getAuthorFullName()}, Wypożyczenia: ${mostBorrowedBook.borrowCount}`);
+        }
+
+        
+        function logTotalBorrows() {
+            let totalBorrows = books.reduce((sum, book) => sum + book.borrowCount, 0);
+            console.log(`Łączna liczba wypożyczeń: ${totalBorrows}`);
+        }
+
+        
+        filterBooks();
+
+        
+        logMostBorrowedBook();
+        logTotalBorrows();
+    </script>
+
+</body>
+</html>
